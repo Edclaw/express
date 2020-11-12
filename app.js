@@ -1,9 +1,10 @@
 var createError = require('http-errors');
+var cookieSession = require('cookie-session')
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan'); // służy do zrzucania logóww trybie developperskim
-
+var config = require('./routes/config'); // importuje dane o cookies z pliku
 var indexRouter = require('./routes/index');
 var newsRouter = require('./routes/news');
 var quizRouter = require('./routes/quiz');
@@ -23,6 +24,13 @@ app.use(express.urlencoded({
   extended: false
 }));
 app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: config.keySessions,
+  // jako value importuje wartości z routes/config.js
+  // Cookie Options
+  maxAge: config.maxAgeSession
+}))
 app.use(express.static(path.join(__dirname, 'public')));
 
 
