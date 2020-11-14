@@ -18,12 +18,15 @@ router.all('*', (req, res, next) => {
 
 /* GET home page. */
 router.get('/', (req, res, ) => {
-
-    console.log(req.session.admin)
-    res.render('admin/index', {
-        title: 'Admin'
+    News.find({}, (err, data) => {
+        res.render('admin/index', {
+            title: 'Admin',
+            data
+        });
     });
-});
+})
+
+
 
 router.get('/news/add', (req, res, ) => {
     res.render('admin/news-form', {
@@ -40,15 +43,23 @@ router.post('/news/add', (req, res, ) => {
     const errors = newsData.validateSync(); // tu będą błedy ktore mogą wystąpić
 
     newsData.save((err) => {
-        console.log(err);
+        if (err) {
+            res.render('admin/news-form', {
+                title: 'Dodaj news',
+                errors,
+                body
+            })
+            return
+        }
+        res.redirect('/admin')
     }); // obsługuje zapisanie newsa na atlasie
 
-
-    res.render('admin/news-form', {
-        title: 'Dodaj news',
-        errors,
-        body
-    });
 }); // przechwytuje dane z formulaza i zapisuje w bazie
+
+router.get('/news/delete/:id', (req, res, ) => {
+    News.findByIdAndDelete(req.params.id, (err) => {
+        res.redirect('/admin')
+    })
+})
 
 module.exports = router;
