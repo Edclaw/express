@@ -5,6 +5,25 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan'); // służy do zrzucania logóww trybie developperskim
 var config = require('./routes/config'); // importuje dane o cookies z pliku
+const mongoose = require('mongoose');
+
+mongoose.connect(config.db, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+  useCreateIndex: true
+});
+
+
+mongoose.connection.on('connected', function () {
+  console.log('polączyło z bazą')
+});
+// sprawdza połączenie
+mongoose.connection.on('error', function () {
+  console.log('Nie połączyło z bazą')
+});
+
+
 var indexRouter = require('./routes/index');
 var newsRouter = require('./routes/news');
 var quizRouter = require('./routes/quiz');
